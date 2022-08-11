@@ -2,9 +2,9 @@ import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@m
 import { SelectChangeEvent } from "@mui/material/Select";
 import { ChangeEvent, useState } from "react";
 import CustomAlert from "./components/CustomAlert";
-import { db } from "../providers/FirebaseProvider";
+import { createEmployee } from "./api/FirebaseAPI";
 
-interface Identification {
+export interface Employee {
   name: string;
   id: string;
   department: string;
@@ -17,27 +17,27 @@ const validateEmail = (email: string): boolean => {
   return /\S+@\S+\.\S+/.test(email);
 };
 
-const validateForm = (identification: Identification): boolean => {
-  if (identification.name.length === 0) {
+const validateForm = (employee: Employee): boolean => {
+  if (employee.name.length === 0) {
     return false;
   }
-  if (identification.id.length === 0) {
+  if (employee.id.length === 0) {
     return false;
   }
-  if (identification.department.length === 0) {
+  if (employee.department.length === 0) {
     return false;
   }
-  if (identification.employmentStatus.length === 0) {
+  if (employee.employmentStatus.length === 0) {
     return false;
   }
-  if (!validateEmail(identification.email)) {
+  if (!validateEmail(employee.email)) {
     return false;
   }
   return true;
 };
 
 const App = () => {
-  const [identification, setIdentification] = useState<Identification>({
+  const [employee, setEmployee] = useState<Employee>({
     name: "",
     id: "",
     department: "",
@@ -49,16 +49,21 @@ const App = () => {
   const [successfulSubmission, setSuccessfulSubmission] = useState<boolean>(false);
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    setIdentification({ ...identification, [e.currentTarget.name]: e.currentTarget.value });
+    setEmployee({ ...employee, [e.currentTarget.name]: e.currentTarget.value });
   };
 
   const handleEmploymentStatusChange = (e: SelectChangeEvent): void => {
-    setIdentification({ ...identification, employmentStatus: e.target.value });
+    setEmployee({ ...employee, employmentStatus: e.target.value });
   };
 
-  const handleSubmit = () => {
-    const validForm = validateForm(identification);
-    setSuccessfulSubmission(validForm);
+  const handleSubmit = async () => {
+    const validForm = validateForm(employee);
+    if (!validForm) {
+      setSuccessfulSubmission(false);
+    } else {
+      const submissionStatus: boolean = await createEmployee(employee);
+      setSuccessfulSubmission(submissionStatus);
+    }
     setAlert(true);
   };
 
@@ -72,32 +77,21 @@ const App = () => {
           name="name"
           label="Full Name"
           variant="standard"
-          value={identification.name}
+          value={employee.name}
           onChange={handleOnChange}
         />
-        <TextField
-          required
-          name="id"
-          label="ID"
-          variant="standard"
-          value={identification.id}
-          onChange={handleOnChange}
-        />
+        <TextField required name="id" label="ID" variant="standard" value={employee.id} onChange={handleOnChange} />
         <TextField
           required
           name="department"
           label="Department"
           variant="standard"
-          value={identification.department}
+          value={employee.department}
           onChange={handleOnChange}
         />
         <FormControl required variant="standard">
           <InputLabel>Employment Status</InputLabel>
-          <Select
-            value={identification.employmentStatus}
-            label="Employment Status"
-            onChange={handleEmploymentStatusChange}
-          >
+          <Select value={employee.employmentStatus} label="Employment Status" onChange={handleEmploymentStatusChange}>
             <MenuItem value={1}>Employed</MenuItem>
             <MenuItem value={0}>Unemployed</MenuItem>
           </Select>
@@ -108,7 +102,7 @@ const App = () => {
           name="email"
           label="Email"
           variant="standard"
-          value={identification.email}
+          value={employee.email}
           onChange={(e) => {
             const isValidEmail: boolean = validateEmail(e.target.value);
             setValidEmail(isValidEmail);
