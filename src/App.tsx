@@ -2,7 +2,7 @@ import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@m
 import { SelectChangeEvent } from "@mui/material/Select";
 import { ChangeEvent, useState } from "react";
 import CustomAlert from "./components/CustomAlert";
-import { createEmployee } from "./api/FirebaseAPI";
+import { createEmployee, checkIfEmployeeExists, uploadEmployeeFile } from "./api/FirebaseAPI";
 
 export interface Employee {
   name: string;
@@ -36,17 +36,19 @@ const validateForm = (employee: Employee): boolean => {
   return true;
 };
 
+const emptyEmployee: Employee = {
+  name: "",
+  id: "",
+  department: "",
+  employmentStatus: "",
+  email: "",
+};
+
 const App = () => {
-  const [employee, setEmployee] = useState<Employee>({
-    name: "",
-    id: "",
-    department: "",
-    employmentStatus: "",
-    email: "",
-  });
+  const [employee, setEmployee] = useState<Employee>(emptyEmployee);
+  const [file, setFile] = useState<null | File>(null);
   const [validEmail, setValidEmail] = useState<boolean>(true);
-  const [alert, setAlert] = useState<boolean>(false);
-  const [successfulSubmission, setSuccessfulSubmission] = useState<boolean>(false);
+  const [alert, setAlert] = useState<"success" | "invalid" | "duplicate" | null>(null);
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     setEmployee({ ...employee, [e.currentTarget.name]: e.currentTarget.value });
@@ -59,17 +61,33 @@ const App = () => {
   const handleSubmit = async () => {
     const validForm = validateForm(employee);
     if (!validForm) {
-      setSuccessfulSubmission(false);
-    } else {
-      const submissionStatus: boolean = await createEmployee(employee);
-      setSuccessfulSubmission(submissionStatus);
+      setAlert("invalid");
+      return;
     }
-    setAlert(true);
+    const exists: boolean = await checkIfEmployeeExists(employee);
+    if (exists) {
+      setAlert("duplicate");
+      return;
+    }
+    if (file !== null && file !== undefined) {
+      const downloadURL = await uploadEmployeeFile(file, employee);
+      await createEmployee({ ...employee, additionalDocuments: downloadURL });
+    } else {
+      await createEmployee(employee);
+    }
+    console.log("Success");
+    setAlert("success");
+  };
+
+  const handleClear = () => {
+    setFile(null);
+    setEmployee(emptyEmployee);
+    setAlert(null);
   };
 
   return (
     <div className="h-screen flex flex-col justify-center items-center">
-      {alert && <CustomAlert type={successfulSubmission} />}
+      {alert && <CustomAlert type={alert} />}
       <form className="rounded-xl flex flex-col justify-center bg-white gap-4 p-8">
         <h1>Identification Information</h1>
         <TextField
@@ -111,12 +129,16 @@ const App = () => {
         />
         <h1 className="mt-4">Additional Documents</h1>
         <Button color="secondary" variant="contained" component="label">
-          Upload
-          <input hidden accept="application/pdf" multiple type="file" />
+          Upload (pdf)
+          <input hidden accept="application/pdf" type="file" onChange={(e: any) => setFile(e.target.files[0])} />
         </Button>
-        <div className="flex flex-col mt-8">
-          <Button color="primary" variant="contained" onClick={handleSubmit}>
+        <p className="text-center">{file?.name}</p>
+        <div className="flex justify-items-stretch mt-8 gap-4">
+          <Button className="flex-1" variant="contained" onClick={handleSubmit}>
             Submit
+          </Button>
+          <Button className="flex-1" variant="contained" onClick={handleClear}>
+            Clear
           </Button>
         </div>
       </form>
