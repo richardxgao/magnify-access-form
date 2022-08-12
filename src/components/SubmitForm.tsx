@@ -2,9 +2,8 @@ import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@m
 import LoadingButton from "@mui/lab/LoadingButton";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { ChangeEvent, useState } from "react";
-import { createEmployee, checkIfEmployeeExists, uploadEmployeeFile } from "../api/FirebaseAPI";
+import { Employee, createEmployee, checkIfEmployeeExists, uploadEmployeeFile } from "../api/FirebaseAPI";
 import CustomAlert from "./CustomAlert";
-import { Employee } from "../api/FirebaseAPI";
 
 const validateEmail = (email: string): boolean => {
   return /\S+@\S+\.\S+/.test(email);
@@ -49,7 +48,7 @@ const SubmitForm = () => {
   };
 
   const handleEmploymentStatusChange = (e: SelectChangeEvent): void => {
-    setEmployee({ ...employee, employmentStatus: e.target.value });
+    setEmployee({ ...employee, employmentStatus: String(e.target.value) });
   };
 
   const handleSubmit = async () => {
