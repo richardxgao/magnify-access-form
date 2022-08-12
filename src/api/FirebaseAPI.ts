@@ -22,7 +22,15 @@ const storage = getStorage();
 export const checkIfEmployeeExists = async (employee: Employee): Promise<boolean> => {
   const q = query(employeesRef, where("email", "==", employee.email));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.size > 0;
+  if (querySnapshot.size > 0) {
+    return true;
+  }
+  const q2 = query(employeesRef, where("id", "==", employee.id));
+  const querySnapshot2 = await getDocs(q2);
+  if (querySnapshot2.size > 0) {
+    return true;
+  }
+  return false;
 };
 
 export const createEmployee = async (employee: Employee): Promise<void> => {

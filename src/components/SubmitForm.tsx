@@ -53,7 +53,7 @@ const SubmitForm = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    setAlert(false);
+    setAlert(null);
     const validForm = validateForm(employee);
     if (!validForm) {
       setAlert("invalid");
