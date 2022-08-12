@@ -113,7 +113,7 @@ const SearchForm = () => {
   };
 
   return (
-    <div className="min-w-[50%] max-w-[90%] p-10 flex flex-col justify-center items-center bg-white rounded-xl">
+    <div className="w-[90%] p-10 flex flex-col justify-center items-center bg-white rounded-xl">
       <div className="w-full flex items-start gap-4 mb-10">
         <div className="flex-1 flex flex-col">
           <TextField
