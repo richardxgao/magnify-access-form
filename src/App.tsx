@@ -2,6 +2,7 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 import SearchForm from "./components/SearchForm";
 import SubmitForm from "./components/SubmitForm";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 const App = () => {
   const [form, setForm] = useState<"Submit" | "Search">("Submit");
@@ -18,6 +19,17 @@ const App = () => {
       </div>
       <h1 className="mb-5">{form} Form</h1>
       {form === "Submit" ? <SubmitForm /> : <SearchForm />}
+      <footer className="mt-10">
+        Created by{" "}
+        <a
+          className="text-blue-600"
+          href="https://github.com/richardxgao/magnify-access-form"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <GitHubIcon /> richardxgao
+        </a>
+      </footer>
     </div>
   );
 };
