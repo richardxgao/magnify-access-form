@@ -19,7 +19,7 @@ const App = () => {
       </div>
       <h1 className="mb-5">{form} Form</h1>
       {form === "Submit" ? <SubmitForm /> : <SearchForm />}
-      <footer className="mt-10">
+      <footer className="mt-10 mb-4">
         Created by{" "}
         <a
           className="text-blue-600"
