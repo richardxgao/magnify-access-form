@@ -1,4 +1,5 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { ChangeEvent, useState } from "react";
 import { createEmployee, checkIfEmployeeExists, uploadEmployeeFile } from "../api/FirebaseAPI";
@@ -41,6 +42,7 @@ const SubmitForm = () => {
   const [file, setFile] = useState<null | File>(null);
   const [validEmail, setValidEmail] = useState<boolean>(true);
   const [alert, setAlert] = useState<"success" | "invalid" | "duplicate" | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     setEmployee({ ...employee, [e.currentTarget.name]: e.currentTarget.value });
@@ -51,6 +53,7 @@ const SubmitForm = () => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const validForm = validateForm(employee);
     if (!validForm) {
       setAlert("invalid");
@@ -69,6 +72,7 @@ const SubmitForm = () => {
     }
     console.log("Success");
     setAlert("success");
+    setLoading(false);
   };
 
   const handleClear = () => {
@@ -126,9 +130,9 @@ const SubmitForm = () => {
         </Button>
         <p className="text-center">{file?.name}</p>
         <div className="flex justify-items-stretch mt-8 gap-4">
-          <Button className="flex-1" variant="contained" onClick={handleSubmit}>
+          <LoadingButton loading={loading} className="flex-1" variant="contained" onClick={handleSubmit}>
             Submit
-          </Button>
+          </LoadingButton>
           <Button className="flex-1" variant="contained" onClick={handleClear}>
             Clear
           </Button>
