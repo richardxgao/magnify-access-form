@@ -1,7 +1,20 @@
 import { collection, getDocs, setDoc, doc, query, where, DocumentData } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db } from "../providers/FirebaseProvider";
-import { Employee } from "../App";
+
+interface AdditionalDocuments {
+  fileName: string;
+  url: string;
+}
+
+export interface Employee {
+  name: string;
+  id: string;
+  department: string;
+  employmentStatus: string;
+  email: string;
+  additionalDocuments?: AdditionalDocuments;
+}
 
 const employeesRef = collection(db, "employees");
 const storage = getStorage();
@@ -14,12 +27,12 @@ export const checkIfEmployeeExists = async (employee: Employee): Promise<boolean
 
 export const createEmployee = async (employee: Employee): Promise<void> => {
   const newDocRef = doc(employeesRef);
-  await setDoc(newDocRef, { ...employee, id: newDocRef.id });
+  await setDoc(newDocRef, { ...employee });
 };
 
 export const getEmployees = async (): Promise<DocumentData[]> => {
   const data = await getDocs(employeesRef);
-  const employees: DocumentData[] = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+  const employees: DocumentData[] = data.docs.map((doc) => ({ ...doc.data() }));
   return employees;
 };
 
