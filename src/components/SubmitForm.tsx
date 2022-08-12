@@ -102,8 +102,8 @@ const SubmitForm = () => {
         <FormControl required variant="standard">
           <InputLabel>Employment Status</InputLabel>
           <Select value={employee.employmentStatus} label="Employment Status" onChange={handleEmploymentStatusChange}>
-            <MenuItem value={1}>Employed</MenuItem>
-            <MenuItem value={0}>Unemployed</MenuItem>
+            <MenuItem value={"1"}>Employed</MenuItem>
+            <MenuItem value={"0"}>Unemployed</MenuItem>
           </Select>
         </FormControl>
         <TextField

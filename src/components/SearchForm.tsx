@@ -6,11 +6,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import { getEmployees } from "../api/FirebaseAPI";
 import { Employee } from "../api/FirebaseAPI";
 import { DocumentData } from "firebase/firestore";
-import { SelectChangeEvent } from "@mui/material/Select";
 
 const convertDataToEmployee = (employee: DocumentData): Employee => {
   const employeeData: Employee = {
@@ -55,18 +54,12 @@ const SearchForm = () => {
   }, []);
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  useEffect(() => {
     let filteredData: Employee[] = originalData;
-    console.log(filteredData);
     filteredData = nameFilter(filteredData);
     filteredData = idFilter(filteredData);
     filteredData = emailFilter(filteredData);
     filteredData = departmentFilter(filteredData);
     filteredData = employmentStatusFilter(filteredData);
-    console.log("Filters changed");
     setData(filteredData);
   }, [name, id, email, department, employmentStatus]);
 
@@ -154,8 +147,8 @@ const SearchForm = () => {
               label="Employment Status"
               onChange={(e: any) => setEmploymentStatus(e.target.value)}
             >
-              <MenuItem value={1}>Employed</MenuItem>
-              <MenuItem value={0}>Unemployed</MenuItem>
+              <MenuItem value={"1"}>Employed</MenuItem>
+              <MenuItem value={"0"}>Unemployed</MenuItem>
             </Select>
           </FormControl>
           <div className="mt-4 flex justify-center">
@@ -200,7 +193,12 @@ const SearchForm = () => {
                 <TableCell align="right">{convertEmploymentCodeToString(employee.employmentStatus)}</TableCell>
                 <TableCell align="right">{employee.email}</TableCell>
                 <TableCell align="right">
-                  <a className="text-blue-600" href={employee.additionalDocuments?.url} target="_blank">
+                  <a
+                    className="text-blue-600"
+                    href={employee.additionalDocuments?.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {employee.additionalDocuments?.fileName}
                   </a>
                 </TableCell>
