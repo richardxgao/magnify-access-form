@@ -54,6 +54,7 @@ const SearchForm = () => {
   }, []);
 
   useEffect(() => {
+    setData([]);
     let filteredData: Employee[] = originalData;
     filteredData = nameFilter(filteredData);
     filteredData = idFilter(filteredData);
@@ -184,7 +185,7 @@ const SearchForm = () => {
           </TableHead>
           <TableBody>
             {data.map((employee: Employee) => (
-              <TableRow key={employee.name}>
+              <TableRow key={employee.id}>
                 <TableCell component="th" className="whitespace-nowrap" scope="employee">
                   {employee.name}
                 </TableCell>
