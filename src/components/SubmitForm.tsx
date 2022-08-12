@@ -56,11 +56,13 @@ const SubmitForm = () => {
     const validForm = validateForm(employee);
     if (!validForm) {
       setAlert("invalid");
+      setLoading(false);
       return;
     }
     const exists: boolean = await checkIfEmployeeExists(employee);
     if (exists) {
       setAlert("duplicate");
+      setLoading(false);
       return;
     }
     if (file !== null && file !== undefined) {
@@ -81,8 +83,7 @@ const SubmitForm = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      {alert && <CustomAlert type={alert} />}
+    <div className="relative flex flex-col justify-center items-center">
       <form className="rounded-xl flex flex-col justify-center bg-white gap-4 p-8">
         <h1>Identification Information</h1>
         <TextField
@@ -137,6 +138,7 @@ const SubmitForm = () => {
           </Button>
         </div>
       </form>
+      {alert && <CustomAlert type={alert} />}
     </div>
   );
 };
