@@ -1,9 +1,11 @@
 import { ChangeEvent, useState } from "react";
-import CustomAlert from "./CustomAlert";
-import { Employee, createEmployee, checkIfEmployeeExists, uploadEmployeeFile } from "../api/FirebaseAPI";
+
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
 import { SelectChangeEvent } from "@mui/material/Select";
+import LoadingButton from "@mui/lab/LoadingButton";
+
+import CustomAlert from "./CustomAlert";
+import { checkIfEmployeeExists, createEmployee, Employee, uploadEmployeeFile } from "../api/FirebaseAPI";
 
 const validateEmail = (email: string): boolean => {
   return /\S+@\S+\.\S+/.test(email);

@@ -1,8 +1,10 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
+
+import { Button } from "@mui/material";
+import GitHubIcon from "@mui/icons-material/GitHub";
+
 import SearchForm from "./components/SearchForm";
 import SubmitForm from "./components/SubmitForm";
-import GitHubIcon from "@mui/icons-material/GitHub";
 
 const App = () => {
   const [form, setForm] = useState<"Submit" | "Search">("Submit");
