@@ -1,14 +1,15 @@
+import { useEffect, useState } from "react";
+
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { useState, useEffect } from "react";
-import { getEmployees } from "../api/FirebaseAPI";
-import { Employee } from "../api/FirebaseAPI";
+
+import { Employee, getEmployees } from "../api/FirebaseAPI";
 import { DocumentData } from "firebase/firestore";
 
 const convertDataToEmployee = (employee: DocumentData): Employee => {
@@ -23,12 +24,9 @@ const convertDataToEmployee = (employee: DocumentData): Employee => {
   return employeeData;
 };
 
-const convertEmploymentCodeToString = (employmentStatus: string): string => {
-  if (employmentStatus === "1") {
-    return "Employed";
-  } else {
-    return "Unemployed";
-  }
+const employmentCodeToString: { [key: string]: string } = {
+  0: "Unemployed",
+  1: "Employed",
 };
 
 const SearchForm = () => {
@@ -42,7 +40,7 @@ const SearchForm = () => {
 
   const getEmployeeData = async () => {
     setData([]);
-    const employeeData = await getEmployees();
+    const employeeData: DocumentData[] = await getEmployees();
     employeeData.map((employee) =>
       setOriginalData((originalData) => [...originalData, convertDataToEmployee(employee)])
     ); // VERY BAD HERE
@@ -65,43 +63,33 @@ const SearchForm = () => {
   }, [name, id, email, department, employmentStatus]);
 
   const nameFilter = (data: Employee[]): Employee[] => {
-    if (name.length !== 0) {
-      return data.filter((employee: Employee) => employee.name.toLowerCase().includes(name.toLowerCase()));
-    } else {
-      return data;
-    }
+    return name.length !== 0
+      ? data.filter((employee: Employee) => employee.name.toLowerCase().includes(name.toLowerCase()))
+      : data;
   };
 
   const idFilter = (data: Employee[]): Employee[] => {
-    if (id.length !== 0) {
-      return data.filter((employee: Employee) => employee.id.toLowerCase().includes(id.toLowerCase()));
-    } else {
-      return data;
-    }
+    return id.length !== 0
+      ? data.filter((employee: Employee) => employee.id.toLowerCase().includes(id.toLowerCase()))
+      : data;
   };
 
   const emailFilter = (data: Employee[]): Employee[] => {
-    if (email.length !== 0) {
-      return data.filter((employee: Employee) => employee.email.toLowerCase().includes(email.toLowerCase()));
-    } else {
-      return data;
-    }
+    return email.length !== 0
+      ? data.filter((employee: Employee) => employee.email.toLowerCase().includes(email.toLowerCase()))
+      : data;
   };
 
   const departmentFilter = (data: Employee[]): Employee[] => {
-    if (department.length !== 0) {
-      return data.filter((employee: Employee) => employee.department.toLowerCase().includes(department.toLowerCase()));
-    } else {
-      return data;
-    }
+    return department.length !== 0
+      ? data.filter((employee: Employee) => employee.department.toLowerCase().includes(department.toLowerCase()))
+      : data;
   };
 
   const employmentStatusFilter = (data: Employee[]): Employee[] => {
-    if (employmentStatus === "1" || employmentStatus === "0") {
-      return data.filter((employee: Employee) => employee.employmentStatus === employmentStatus);
-    } else {
-      return data;
-    }
+    return employmentStatus === "1" || employmentStatus === "0"
+      ? data.filter((employee: Employee) => employee.employmentStatus === employmentStatus)
+      : data;
   };
 
   const resetFilters = () => {
@@ -191,7 +179,7 @@ const SearchForm = () => {
                 </TableCell>
                 <TableCell align="right">{employee.id}</TableCell>
                 <TableCell align="right">{employee.department}</TableCell>
-                <TableCell align="right">{convertEmploymentCodeToString(employee.employmentStatus)}</TableCell>
+                <TableCell align="right">{employmentCodeToString[employee.employmentStatus]}</TableCell>
                 <TableCell align="right">{employee.email}</TableCell>
                 <TableCell align="right">
                   <a
