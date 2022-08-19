@@ -1,9 +1,9 @@
+import { ChangeEvent, useState } from "react";
+import CustomAlert from "./CustomAlert";
+import { Employee, createEmployee, checkIfEmployeeExists, uploadEmployeeFile } from "../api/FirebaseAPI";
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { ChangeEvent, useState } from "react";
-import { Employee, createEmployee, checkIfEmployeeExists, uploadEmployeeFile } from "../api/FirebaseAPI";
-import CustomAlert from "./CustomAlert";
 
 const validateEmail = (email: string): boolean => {
   return /\S+@\S+\.\S+/.test(email);
@@ -54,25 +54,28 @@ const SubmitForm = () => {
   const handleSubmit = async () => {
     setLoading(true);
     setAlert(null);
+
     const validForm = validateForm(employee);
     if (!validForm) {
       setAlert("invalid");
       setLoading(false);
       return;
     }
-    const exists: boolean = await checkIfEmployeeExists(employee);
-    if (exists) {
+
+    const employeeExists: boolean = await checkIfEmployeeExists(employee);
+    if (employeeExists) {
       setAlert("duplicate");
       setLoading(false);
       return;
     }
+
     if (file !== null && file !== undefined) {
       const downloadURL = await uploadEmployeeFile(file, employee);
       await createEmployee({ ...employee, additionalDocuments: { fileName: file.name, url: downloadURL } });
     } else {
       await createEmployee(employee);
     }
-    console.log("Success");
+
     setAlert("success");
     setLoading(false);
   };
